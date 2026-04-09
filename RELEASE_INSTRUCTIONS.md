@@ -7,7 +7,7 @@ Questa guida spiega come pubblicare manualmente la **demo Windows** di NEXORA su
 Pubblicare un installer demo scaricabile da questo URL:
 
 ```text
-https://github.com/gaetanomeli95-lab/NEXORA-V4-Gestionale-aziendale-/releases/latest/download/NEXORA-Demo-Setup.exe
+https://github.com/gaetanomeli95-lab/nexora-v4-gestionale-aziendale/releases/latest/download/NEXORA-Demo-Setup.exe
 ```
 
 ## 1. Genera l'installer demo
@@ -50,7 +50,7 @@ A:  NEXORA-Demo-Setup.exe
 ## 3. Crea una nuova release su GitHub
 
 1. Apri il repository:
-   - `https://github.com/gaetanomeli95-lab/NEXORA-V4-Gestionale-aziendale-`
+   - `https://github.com/gaetanomeli95-lab/nexora-v4-gestionale-aziendale`
 2. Vai su **Releases**.
 3. Clicca **Draft a new release**.
 4. Inserisci un tag, ad esempio:
@@ -67,7 +67,7 @@ A:  NEXORA-Demo-Setup.exe
 Dopo la pubblicazione, controlla che questo URL funzioni nel browser:
 
 ```text
-https://github.com/gaetanomeli95-lab/NEXORA-V4-Gestionale-aziendale-/releases/latest/download/NEXORA-Demo-Setup.exe
+https://github.com/gaetanomeli95-lab/nexora-v4-gestionale-aziendale/releases/latest/download/NEXORA-Demo-Setup.exe
 ```
 
 Se parte il download, la landing page è già correttamente collegata.
@@ -95,7 +95,7 @@ con il link esatto dell'asset caricato.
 Esempio:
 
 ```text
-https://github.com/gaetanomeli95-lab/NEXORA-V4-Gestionale-aziendale-/releases/download/v4.0.0-demo/NEXORA-Demo-Setup-4.0.0.exe
+https://github.com/gaetanomeli95-lab/nexora-v4-gestionale-aziendale/releases/download/v4.0.0-demo/NEXORA-Demo-Setup-4.0.0.exe
 ```
 
 ## 6. Dove aggiornare il pulsante download

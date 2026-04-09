@@ -7,9 +7,9 @@ Gestionale moderno per aziende e professionisti, con interfaccia web in Next.js,
 ## Download rapido
 
 - **Landing pubblica:** `app/page.tsx`
-- **Repository GitHub:** `https://github.com/gaetanomeli95-lab/NEXORA-V4-Gestionale-aziendale-`
-- **GitHub Releases:** `https://github.com/gaetanomeli95-lab/NEXORA-V4-Gestionale-aziendale-/releases`
-- **Demo Windows:** `https://github.com/gaetanomeli95-lab/NEXORA-V4-Gestionale-aziendale-/releases/latest/download/NEXORA-Demo-Setup.exe`
+- **Repository GitHub:** `https://github.com/gaetanomeli95-lab/nexora-v4-gestionale-aziendale`
+- **GitHub Releases:** `https://github.com/gaetanomeli95-lab/nexora-v4-gestionale-aziendale/releases`
+- **Demo Windows:** `https://github.com/gaetanomeli95-lab/nexora-v4-gestionale-aziendale/releases/latest/download/NEXORA-Demo-Setup.exe`
 
 ## Cosa include NEXORA
 
@@ -59,8 +59,8 @@ Gestionale moderno per aziende e professionisti, con interfaccia web in Next.js,
 ### Setup rapido
 
 ```bash
-git clone https://github.com/gaetanomeli95-lab/NEXORA-V4-Gestionale-aziendale-.git
-cd NEXORA-V4-Gestionale-aziendale-
+git clone https://github.com/gaetanomeli95-lab/nexora-v4-gestionale-aziendale.git
+cd nexora-v4-gestionale-aziendale
 npm install --legacy-peer-deps
 copy .env.example .env.local
 npx prisma generate
@@ -168,7 +168,7 @@ Per pubblicare correttamente l'installer demo e collegarlo al pulsante della lan
 
 ## Supporto
 
-- **GitHub Issues:** `https://github.com/gaetanomeli95-lab/NEXORA-V4-Gestionale-aziendale-/issues`
+- **GitHub Issues:** `https://github.com/gaetanomeli95-lab/nexora-v4-gestionale-aziendale/issues`
 
 ## Licenza
 

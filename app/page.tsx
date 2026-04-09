@@ -3,8 +3,8 @@ import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { ArrowRight, Download, Github, Package, Shield, Sparkles, Zap } from 'lucide-react'
 
-const demoDownloadUrl = process.env.NEXT_PUBLIC_DEMO_DOWNLOAD_URL || 'https://github.com/gaetanomeli95-lab/NEXORA-V4-Gestionale-aziendale-/releases/latest/download/NEXORA-Demo-Setup.exe'
-const githubRepoUrl = 'https://github.com/gaetanomeli95-lab/NEXORA-V4-Gestionale-aziendale-'
+const demoDownloadUrl = process.env.NEXT_PUBLIC_DEMO_DOWNLOAD_URL || 'https://github.com/gaetanomeli95-lab/nexora-v4-gestionale-aziendale/releases/latest/download/NEXORA-Demo-Setup.exe'
+const githubRepoUrl = 'https://github.com/gaetanomeli95-lab/nexora-v4-gestionale-aziendale'
 
 const featureCards = [
   {
