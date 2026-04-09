@@ -1,0 +1,160 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    --background: 0 0% 100%;
+    --foreground: 222.2 84% 4.9%;
+    --card: 0 0% 100%;
+    --card-foreground: 222.2 84% 4.9%;
+    --popover: 0 0% 100%;
+    --popover-foreground: 222.2 84% 4.9%;
+    --primary: 221.2 83.2% 53.3%;
+    --primary-foreground: 210 40% 98%;
+    --secondary: 210 40% 96%;
+    --secondary-foreground: 222.2 84% 4.9%;
+    --muted: 210 40% 96%;
+    --muted-foreground: 215.4 16.3% 38%;
+    --accent: 210 40% 96%;
+    --accent-foreground: 222.2 84% 4.9%;
+    --destructive: 0 84.2% 60.2%;
+    --destructive-foreground: 210 40% 98%;
+    --border: 214.3 31.8% 82%;
+    --input: 214.3 31.8% 82%;
+    --ring: 221.2 83.2% 53.3%;
+    --radius: 0.5rem;
+  }
+
+  .dark {
+    --background: 222.2 84% 4.9%;
+    --foreground: 210 40% 98%;
+    --card: 222.2 84% 4.9%;
+    --card-foreground: 210 40% 98%;
+    --popover: 222.2 84% 4.9%;
+    --popover-foreground: 210 40% 98%;
+    --primary: 217.2 91.2% 59.8%;
+    --primary-foreground: 222.2 84% 4.9%;
+    --secondary: 217.2 32.6% 17.5%;
+    --secondary-foreground: 210 40% 98%;
+    --muted: 217.2 32.6% 17.5%;
+    --muted-foreground: 215 20.2% 65.1%;
+    --accent: 217.2 32.6% 17.5%;
+    --accent-foreground: 210 40% 98%;
+    --destructive: 0 62.8% 30.6%;
+    --destructive-foreground: 210 40% 98%;
+    --border: 217.2 32.6% 17.5%;
+    --input: 217.2 32.6% 17.5%;
+    --ring: 224.3 76.3% 94.1%;
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+  body {
+    @apply bg-background text-foreground antialiased;
+    letter-spacing: -0.01em;
+    font-variant-numeric: tabular-nums;
+  }
+}
+
+@layer utilities {
+  .premium-interactive {
+    @apply transition-all duration-200 hover:-translate-y-1;
+    box-shadow: 0 8px 30px rgba(15, 23, 42, 0.06), 0 2px 10px rgba(15, 23, 42, 0.04);
+  }
+
+  .premium-interactive:hover {
+    box-shadow: 0 18px 40px rgba(15, 23, 42, 0.1), 0 6px 18px rgba(15, 23, 42, 0.06);
+  }
+
+  .module-hero {
+    @apply relative flex flex-col gap-4 overflow-hidden rounded-2xl border border-white/15 px-6 py-5 text-white shadow-[0_12px_34px_rgba(15,23,42,0.12)] lg:flex-row lg:items-center lg:justify-between;
+  }
+
+  .module-hero::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(135deg, rgba(255,255,255,0.1), transparent 45%, rgba(255,255,255,0.06));
+    pointer-events: none;
+  }
+
+  .module-hero-content {
+    @apply relative z-10 min-w-0;
+  }
+
+  .module-hero-icon-shell {
+    @apply flex h-10 w-10 items-center justify-center rounded-xl border border-white/20 bg-white/[0.12] backdrop-blur-sm;
+  }
+
+  .module-hero-watermark {
+    @apply absolute right-4 top-1/2 z-0 hidden h-24 w-24 -translate-y-1/2 text-white/10 md:block;
+  }
+
+  .glass-panel-dark {
+    @apply border border-white/10 bg-white/[0.10] text-white backdrop-blur-md;
+    box-shadow: 0 10px 30px rgba(2, 6, 23, 0.14);
+  }
+
+  .glass-panel-dark .metric-value {
+    @apply text-white;
+  }
+
+  .kpi-surface {
+    @apply rounded-xl border border-slate-200 bg-white shadow-sm transition hover:shadow-md;
+  }
+
+  .empty-state-shell {
+    @apply flex flex-col items-center justify-center gap-4 rounded-2xl border border-dashed border-slate-300 bg-slate-50/90 px-6 py-14 text-center;
+  }
+
+  .empty-state-icon {
+    @apply flex h-14 w-14 items-center justify-center rounded-2xl border border-slate-300 bg-white text-slate-500 shadow-sm;
+  }
+
+  .empty-state-title {
+    @apply text-base font-bold text-slate-900;
+  }
+
+  .empty-state-description {
+    @apply text-sm font-medium text-slate-600;
+  }
+
+  .metric-value {
+    @apply tabular-nums tracking-tight text-slate-900;
+  }
+}
+
+/* Stili di test per verificare che il CSS funzioni */
+.test-gradient {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+}
+
+.test-button {
+  background-color: #3b82f6;
+  color: white;
+  padding: 8px 16px;
+  border-radius: 6px;
+  border: none;
+  cursor: pointer;
+}
+
+.test-button:hover {
+  background-color: #2563eb;
+}
+
+.test-card {
+  background: white;
+  border: 1px solid #e5e7eb;
+  border-radius: 8px;
+  padding: 16px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+/* Card shadow enhancement */
+.shadow-card {
+  box-shadow: 0 1px 3px 0 rgba(0,0,0,0.08), 0 1px 2px -1px rgba(0,0,0,0.08);
+}

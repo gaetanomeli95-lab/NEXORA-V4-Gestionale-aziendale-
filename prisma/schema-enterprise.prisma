@@ -1,0 +1,710 @@
+// ENTERPRISE DATABASE SCHEMA - NEXORA v4
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = "file:./dev-enterprise.db"
+}
+
+// Multi-Tenant Architecture
+model Tenant {
+  id                    String    @id @default(cuid())
+  name                  String
+  domain                String?   @unique
+  subdomain             String?   @unique
+  logo                  String?
+  primaryColor          String    @default("#3b82f6")
+  secondaryColor        String    @default("#6b7280")
+  accentColor           String    @default("#10b981")
+  backgroundColor      String    @default("#f8fafc")
+  fontFamily            String    @default("Inter")
+  language              String    @default("it")
+  timezone              String    @default("Europe/Rome")
+  currency              String    @default("EUR")
+  dateFormat            String    @default("DD/MM/YYYY")
+  numberFormat          String    @default("it-IT")
+  
+  // Subscription & Billing
+  subscriptionPlan      String    @default("STARTER") // FREE, STARTER, PROFESSIONAL, ENTERPRISE
+  subscriptionStatus    String    @default("TRIAL") // TRIAL, ACTIVE, SUSPENDED, CANCELLED
+  subscriptionStartsAt  DateTime
+  subscriptionEndsAt    DateTime
+  maxUsers              Int       @default(3)
+  maxCustomers          Int       @default(50)
+  maxProducts           Int       @default(100)
+  maxInvoicesPerMonth    Int       @default(20)
+  maxStorageMB          Int       @default(100)
+  
+  // Company Info
+  legalName             String
+  vatNumber             String?
+  fiscalCode            String?
+  address               String?
+  city                  String?
+  province              String?
+  postalCode            String?
+  country               String    @default("IT")
+  phone                 String?
+  mobile                String?
+  email                 String?
+  website               String?
+  
+  // Business Settings
+  businessType          String    @default("B2B") // B2B, B2C, BOTH
+  industry              String?
+  employeeCount         String?   // 1-10, 11-50, 51-200, 201-500, 500+
+  annualRevenue         String?   // <100K, 100K-1M, 1M-10M, 10M-50M, 50M+
+  
+  // Legal & Compliance
+  privacyPolicyAccepted Boolean   @default(false)
+  termsAccepted         Boolean   @default(false)
+  gdprCompliant         Boolean   @default(false)
+  sdiEnabled            Boolean   @default(false)
+  electronicInvoicing   Boolean   @default(false)
+  
+  // Integration Settings
+  emailProvider         String?   // SMTP, SENDGRID, MAILGUN
+  smsProvider           String?   // TWILIO, MESSAGEBIRD
+  paymentProvider       String?   // STRIPE, PAYPAL, SQUARE
+  accountingProvider    String?   // QUICKBOOKS, XERO, SAGE
+  
+  // Advanced Settings
+  apiEnabled            Boolean   @default(false)
+  apiRateLimit          Int       @default(1000)
+  webhookUrl            String?
+  backupEnabled         Boolean   @default(true)
+  backupFrequency       String    @default("daily") // hourly, daily, weekly
+  twoFactorAuth         Boolean   @default(false)
+  ipWhitelist           String?   // JSON array of IPs
+  
+  createdAt             DateTime  @default(now())
+  updatedAt             DateTime  @updatedAt
+  
+  // Relations
+  users                 User[]
+  customers             Customer[]
+  products              Product[]
+  categories            Category[]
+  invoices              Invoice[]
+  estimates             Estimate[]
+  orders                Order[]
+  payments              Payment[]
+  expenses              Expense[]
+  projects              Project[]
+  tasks                 Task[]
+  documents             Document[]
+  notifications         Notification[]
+  auditLogs             AuditLog[]
+  integrations          Integration[]
+  workflows             Workflow[]
+  reports               Report[]
+  templates             Template[]
+  
+  @@unique([legalName, vatNumber])
+  @@map("tenants")
+}
+
+// Advanced User Management with Roles & Permissions
+model User {
+  id                    String    @id @default(cuid())
+  tenantId              String
+  tenant                Tenant    @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  
+  // Profile
+  firstName             String
+  lastName              String
+  email                 String
+  phone                 String?
+  avatar                String?
+  bio                   String?
+  
+  // Authentication
+  password              String
+  passwordHash          String
+  passwordResetToken    String?
+  passwordResetExpires  DateTime?
+  emailVerified         Boolean   @default(false)
+  emailVerificationToken String?
+  twoFactorEnabled      Boolean   @default(false)
+  twoFactorSecret       String?
+  
+  // Roles & Permissions
+  role                  String    @default("USER") // SUPER_ADMIN, ADMIN, MANAGER, USER, VIEWER
+  permissions           String[]  // JSON array of permissions
+  department            String?
+  position              String?
+  managerId             String?
+  manager               User?     @relation("UserManager", fields: [managerId], references: [id])
+  managedUsers          User[]    @relation("UserManager")
+  
+  // Preferences
+  language              String    @default("it")
+  timezone              String    @default("Europe/Rome")
+  dateFormat            String    @default("DD/MM/YYYY")
+  theme                 String    @default("light") // light, dark, auto
+  notifications         Json?     // Notification preferences
+  
+  // Activity Tracking
+  lastLoginAt            DateTime?
+  lastLoginIP            String?
+  loginCount             Int       @default(0)
+  isActive              Boolean   @default(true)
+  isLocked              Boolean   @default(false)
+  lockReason            String?
+  
+  createdAt             DateTime  @default(now())
+  updatedAt             DateTime  @updatedAt
+  
+  // Relations
+  invoices              Invoice[]
+  estimates             Estimate[]
+  orders                Order[]
+  payments              Payment[]
+  expenses              Expense[]
+  projects              Project[]
+  tasks                 Task[]
+  documents             Document[]
+  notifications         Notification[]
+  auditLogs             AuditLog[]
+  
+  @@unique([tenantId, email])
+  @@map("users")
+}
+
+// Advanced Customer Management
+model Customer {
+  id                    String    @id @default(cuid())
+  tenantId              String
+  tenant                Tenant    @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  
+  // Basic Info
+  type                  String    @default("COMPANY") // COMPANY, INDIVIDUAL, PRIVATE
+  businessName          String?
+  firstName             String?
+  lastName              String?
+  email                 String?
+  phone                 String?
+  mobile                String?
+  website               String?
+  
+  // Legal & Tax
+  vatNumber             String?
+  fiscalCode            String?
+  taxId                 String?
+  sdiCode               String?
+  pecEmail              String?
+  
+  // Address
+  billingAddress        Json?     // Complete billing address
+  shippingAddress       Json?     // Complete shipping address
+  sameAsBilling         Boolean   @default(true)
+  
+  // Financial
+  paymentTerms          String?   // NET15, NET30, NET60, NET90, IMMEDIATE
+  creditLimit           Float     @default(0)
+  creditUsed            Float     @default(0)
+  currency              String    @default("EUR")
+  
+  // Classification
+  industry              String?
+  size                  String?   // SMALL, MEDIUM, LARGE
+  segment               String?   // PREMIUM, STANDARD, BASIC
+  source                String?   // WEBSITE, REFERRAL, COLD_CALL, PARTNER
+  
+  // Communication
+  preferredContact      String?   // EMAIL, PHONE, SMS, MAIL
+  marketingConsent      Boolean   @default(false)
+  privacyConsent        Boolean   @default(false)
+  
+  // Status & Notes
+  status                String    @default("ACTIVE") // ACTIVE, INACTIVE, PROSPECT, BLACKLISTED
+  rating                Int?      // 1-5 star rating
+  notes                 String?
+  tags                  String[]  // JSON array of tags
+  
+  // Relationships
+  parentId              String?
+  parent                Customer? @relation("CustomerHierarchy", fields: [parentId], references: [id])
+  children              Customer[] @relation("CustomerHierarchy")
+  contacts              Contact[]
+  
+  // Activity
+  createdAt             DateTime  @default(now())
+  updatedAt             DateTime  @updatedAt
+  lastContactAt          DateTime?
+  
+  // Relations
+  invoices              Invoice[]
+  estimates             Estimate[]
+  orders                Order[]
+  payments              Payment[]
+  projects              Project[]
+  tasks                 Task[]
+  documents             Document[]
+  
+  @@unique([tenantId, vatNumber])
+  @@unique([tenantId, email])
+  @@map("customers")
+}
+
+// Customer Contacts
+model Contact {
+  id                    String    @id @default(cuid())
+  customerId            String
+  customer              Customer  @relation(fields: [customerId], references: [id], onDelete: Cascade)
+  
+  firstName             String
+  lastName              String
+  email                 String?
+  phone                 String?
+  mobile                String?
+  position              String?
+  department            String?
+  
+  isPrimary             Boolean   @default(false)
+  isInvoicingContact    Boolean   @default(false)
+  isTechnicalContact    Boolean   @default(false)
+  
+  notes                 String?
+  isActive              Boolean   @default(true)
+  
+  createdAt             DateTime  @default(now())
+  updatedAt             DateTime  @updatedAt
+  
+  @@map("contacts")
+}
+
+// Advanced Product Management
+model Product {
+  id                    String    @id @default(cuid())
+  tenantId              String
+  tenant                Tenant    @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  categoryId            String?
+  category              Category? @relation(fields: [categoryId], references: [id])
+  
+  // Basic Info
+  sku                   String?   @unique
+  barcode               String?
+  name                  String
+  description           String?
+  shortDescription      String?
+  specifications        Json?     // Technical specifications
+  
+  // Pricing
+  unitPrice             Float
+  costPrice             Float?
+  retailPrice           Float?
+  wholesalePrice        Float?
+  currency              String    @default("EUR")
+  
+  // Pricing Rules
+  pricingRules           Json?     // Quantity discounts, tiered pricing
+  
+  // Inventory
+  stockQuantity         Float     @default(0)
+  minStockLevel         Float     @default(0)
+  maxStockLevel         Float?
+  reorderPoint          Float?
+  reorderQuantity       Float?
+  
+  // Stock Management
+  trackStock            Boolean   @default(true)
+  allowBackorder        Boolean   @default(false)
+  stockLocation         String?
+  binLocation           String?
+  
+  // Physical Attributes
+  weight                Float?
+  dimensions            Json?     // {length, width, height, unit}
+  volume                Float?
+  
+  // Digital Products
+  isDigital             Boolean   @default(false)
+  downloadUrl           String?
+  licenseKey            String?
+  expiryDays            Int?
+  
+  // Services
+  isService             Boolean   @default(false)
+  serviceDuration       String?   // HOURLY, DAILY, WEEKLY, MONTHLY, YEARLY
+  serviceTerms          String?
+  
+  // Tax & Compliance
+  taxRate               Float     @default(22)
+  taxCategory           String?
+  requiresPrescription  Boolean   @default(false)
+  
+  // Classification
+  tags                  String[]  // JSON array of tags
+  attributes            Json?     // Custom attributes
+  
+  // Supplier Info
+  supplierId            String?
+  supplierSku           String?
+  supplierName          String?
+  
+  // Status
+  status                String    @default("ACTIVE") // ACTIVE, INACTIVE, DISCONTINUED
+  featured              Boolean   @default(false)
+  
+  // SEO & Marketing
+  slug                  String?
+  metaTitle             String?
+  metaDescription       String?
+  images                Json?     // Array of image URLs
+  
+  // Analytics
+  viewCount             Int       @default(0)
+  soldCount             Int       @default(0)
+  revenue               Float     @default(0)
+  
+  createdAt             DateTime  @default(now())
+  updatedAt             DateTime  @updatedAt
+  
+  // Relations
+  invoiceItems          InvoiceItem[]
+  estimateItems         EstimateItem[]
+  orderItems            OrderItem[]
+  stockMovements        StockMovement[]
+  documents             Document[]
+  
+  @@unique([tenantId, sku])
+  @@map("products")
+}
+
+// Advanced Category Management
+model Category {
+  id                    String    @id @default(cuid())
+  tenantId              String
+  tenant                Tenant    @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  
+  name                  String
+  description           String?
+  slug                  String?
+  
+  // Hierarchy
+  parentId              String?
+  parent                Category? @relation("CategoryHierarchy", fields: [parentId], references: [id])
+  children              Category[] @relation("CategoryHierarchy")
+  level                 Int       @default(0)
+  sortOrder             Int       @default(0)
+  
+  // Settings
+  isActive              Boolean   @default(true)
+  showInMenu            Boolean   @default(true)
+  
+  // SEO
+  metaTitle             String?
+  metaDescription       String?
+  image                 String?
+  
+  createdAt             DateTime  @default(now())
+  updatedAt             DateTime  @updatedAt
+  
+  // Relations
+  products              Product[]
+  
+  @@unique([tenantId, slug])
+  @@map("categories")
+}
+
+// Advanced Invoice Management
+model Invoice {
+  id                    String    @id @default(cuid())
+  tenantId              String
+  tenant                Tenant    @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  customerId            String
+  customer              Customer  @relation(fields: [customerId], references: [id])
+  
+  // Invoice Details
+  number                String
+  prefix                String?   // e.g., "FAT"
+  year                  Int
+  sequence              Int
+  
+  // Dates
+  issueDate             DateTime
+  dueDate               DateTime
+  deliveryDate           DateTime?
+  paymentDate           DateTime?
+  
+  // Status
+  status                String    @default("DRAFT") // DRAFT, SENT, PAID, OVERDUE, CANCELLED, PARTIAL
+  paymentStatus         String    @default("UNPAID") // UNPAID, PARTIAL, PAID, OVERDUE
+  
+  // Financials
+  subtotal              Float
+  taxAmount             Float
+  totalAmount           Float
+  paidAmount            Float     @default(0)
+  balanceAmount         Float
+  
+  // Currency & Exchange
+  currency              String    @default("EUR")
+  exchangeRate          Float     @default(1)
+  
+  // Payment Terms
+  paymentTerms          String?
+  paymentMethod         String?
+  paymentInstructions   String?
+  
+  // Notes & Messages
+  notes                 String?
+  internalNotes         String?
+  customerNotes         String?
+  terms                 String?
+  
+  // Electronic Invoicing
+  electronicInvoice     Boolean   @default(false)
+  sdiCode               String?
+  pecEmail              String?
+  
+  // Workflow
+  templateId            String?
+  workflowId            String?
+  approvedBy            String?
+  approvedAt            DateTime?
+  
+  // Relations
+  createdBy             String?
+  updatedBy             String?
+  
+  createdAt             DateTime  @default(now())
+  updatedAt             DateTime  @updatedAt
+  
+  // Relations
+  items                 InvoiceItem[]
+  payments              Payment[]
+  documents             Document[]
+  notifications         Notification[]
+  auditLogs             AuditLog[]
+  
+  @@unique([tenantId, number])
+  @@map("invoices")
+}
+
+// Advanced Invoice Items
+model InvoiceItem {
+  id                    String    @id @default(cuid())
+  invoiceId             String
+  invoice               Invoice   @relation(fields: [invoiceId], references: [id], onDelete: Cascade)
+  productId             String?
+  product               Product?  @relation(fields: [productId], references: [id])
+  
+  description           String
+  quantity              Float
+  unit                  String    @default("pz")
+  
+  // Pricing
+  unitPrice             Float
+  totalPrice            Float
+  discount              Float     @default(0)
+  discountType          String?   // PERCENTAGE, FIXED
+  
+  // Tax
+  taxRate               Float
+  taxAmount             Float
+  taxExempt             Boolean   @default(false)
+  taxReason             String?
+  
+  // Additional Info
+  notes                 String?
+  sortOrder             Int       @default(0)
+  
+  // Tracking
+  deliveredQuantity     Float     @default(0)
+  invoicedQuantity      Float
+  
+  createdAt             DateTime  @default(now())
+  updatedAt             DateTime  @updatedAt
+  
+  @@unique([invoiceId, productId])
+  @@map("invoice_items")
+}
+
+// Stock Movements
+model StockMovement {
+  id                    String    @id @default(cuid())
+  tenantId              String
+  
+  productId             String
+  product               Product   @relation(fields: [productId], references: [id], onDelete: Cascade)
+  
+  movementType          String    // IN, OUT, ADJUSTMENT, RETURN, TRANSFER
+  quantity              Float
+  
+  // Reference
+  referenceType         String?   // INVOICE, ORDER, PURCHASE, ADJUSTMENT
+  referenceId           String?
+  referenceNumber        String?
+  
+  // Location
+  fromLocation          String?
+  toLocation            String?
+  
+  // Reason & Notes
+  reason                String?
+  notes                 String?
+  
+  // User & Time
+  userId                String?
+  movementDate          DateTime  @default(now())
+  
+  createdAt             DateTime  @default(now())
+  
+  @@map("stock_movements")
+}
+
+// Documents Management
+model Document {
+  id                    String    @id @default(cuid())
+  tenantId              String
+  tenant                Tenant    @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  
+  // Document Info
+  name                  String
+  description           String?
+  type                  String    // INVOICE, ESTIMATE, CONTRACT, RECEIPT, OTHER
+  
+  // File Info
+  fileName              String
+  filePath              String
+  fileSize              Int
+  mimeType              String
+  checksum              String?
+  
+  // Relations
+  customerId            String?
+  invoiceId             String?
+  productId             String?
+  projectId             String?
+  userId                String?
+  
+  // Access Control
+  isPublic              Boolean   @default(false)
+  allowedUsers          String[]  // JSON array of user IDs
+  
+  // Metadata
+  tags                  String[]  // JSON array of tags
+  metadata              Json?     // Custom metadata
+  
+  // Version Control
+  version               Int       @default(1)
+  parentDocumentId      String?
+  
+  createdAt             DateTime  @default(now())
+  updatedAt             DateTime  @updatedAt
+  
+  @@map("documents")
+}
+
+// Workflow System
+model Workflow {
+  id                    String    @id @default(cuid())
+  tenantId              String
+  tenant                Tenant    @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  
+  name                  String
+  description           String?
+  trigger               String    // MANUAL, INVOICE_CREATED, ORDER_CONFIRMED, etc.
+  
+  // Workflow Definition
+  steps                 Json      // Array of workflow steps
+  conditions            Json?     // Workflow conditions
+  
+  // Settings
+  isActive              Boolean   @default(true)
+  
+  createdAt             DateTime  @default(now())
+  updatedAt             DateTime  @updatedAt
+  
+  // Relations
+  executions            WorkflowExecution[]
+  
+  @@map("workflows")
+}
+
+// Workflow Executions
+model WorkflowExecution {
+  id                    String    @id @default(cuid())
+  workflowId            String
+  workflow              Workflow  @relation(fields: [workflowId], references: [id], onDelete: Cascade)
+  
+  // Execution Info
+  status                String    // RUNNING, COMPLETED, FAILED, CANCELLED
+  currentStep           Int       @default(0)
+  
+  // Context
+  entityType            String    // INVOICE, CUSTOMER, etc.
+  entityId              String
+  
+  // Results
+  results               Json?
+  errorMessage          String?
+  
+  // Timing
+  startedAt             DateTime  @default(now())
+  completedAt           DateTime?
+  
+  @@map("workflow_executions")
+}
+
+// Audit Logs
+model AuditLog {
+  id                    String    @id @default(cuid())
+  tenantId              String
+  tenant                Tenant    @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  
+  userId                String?
+  user                  User?     @relation(fields: [userId], references: [id])
+  
+  action                String    // CREATE, UPDATE, DELETE, LOGIN, LOGOUT, etc.
+  entityType            String    // INVOICE, CUSTOMER, PRODUCT, etc.
+  entityId              String?
+  
+  // Changes
+  oldValues             Json?
+  newValues             Json?
+  
+  // Context
+  ipAddress             String?
+  userAgent             String?
+  
+  createdAt             DateTime  @default(now())
+  
+  @@map("audit_logs")
+}
+
+// Notifications
+model Notification {
+  id                    String    @id @default(cuid())
+  tenantId              String
+  tenant                Tenant    @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  
+  userId                String?
+  user                  User?     @relation(fields: [userId], references: [id])
+  
+  type                  String    // INFO, SUCCESS, WARNING, ERROR, SYSTEM
+  title                 String
+  message               String
+  
+  // Channels
+  channels              String[]  // EMAIL, SMS, PUSH, IN_APP
+  
+  // Status
+  isRead                Boolean   @default(false)
+  readAt                DateTime?
+  
+  // Actions
+  actionUrl             String?
+  actionText            String?
+  
+  // Metadata
+  metadata              Json?
+  
+  createdAt             DateTime  @default(now())
+  
+  @@map("notifications")
+}
