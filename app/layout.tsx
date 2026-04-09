@@ -7,8 +7,8 @@ import { DesktopRuntimeProvider } from '@/components/desktop/desktop-runtime-pro
 const inter = Inter({ subsets: ['latin'] })
 
 export const metadata: Metadata = {
-  title: 'NEXORA v4 - Next Generation Business Management',
-  description: 'Sistema gestionale rivoluzionario con intelligenza artificiale e analytics real-time',
+  title: 'NEXORA V4 | Gestionale intelligente per aziende',
+  description: 'Gestionale moderno per aziende e professionisti con demo desktop Windows, documenti commerciali, magazzino, clienti e analytics.',
 }
 
 export default function RootLayout({

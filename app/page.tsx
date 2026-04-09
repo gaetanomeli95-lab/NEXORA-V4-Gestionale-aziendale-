@@ -51,7 +51,7 @@ export default function Home() {
 
           <div className="flex items-center gap-3">
             <Button asChild variant="ghost" className="hidden text-slate-200 shadow-none hover:bg-white/10 hover:text-white md:inline-flex">
-              <Link href="/auth/signin">Accedi</Link>
+              <a href={githubRepoUrl} target="_blank" rel="noreferrer">Apri GitHub</a>
             </Button>
             <Button asChild className="bg-gradient-to-r from-blue-500 via-indigo-500 to-purple-600 text-white shadow-[0_22px_50px_-20px_rgba(96,165,250,0.7)] hover:from-blue-400 hover:via-indigo-500 hover:to-purple-500">
               <a href={demoDownloadUrl} target="_blank" rel="noreferrer">
@@ -93,10 +93,10 @@ export default function Home() {
                 </Button>
 
                 <Button asChild size="lg" variant="outline" className="h-14 rounded-2xl border-white/15 bg-white/5 px-8 text-base font-semibold text-slate-100 hover:bg-white/10 hover:text-white">
-                  <Link href="/auth/signin">
-                    Accedi alla piattaforma
+                  <a href={githubRepoUrl} target="_blank" rel="noreferrer">
+                    Vedi il progetto
                     <ArrowRight className="ml-2 h-4 w-4" />
-                  </Link>
+                  </a>
                 </Button>
               </div>
 
@@ -233,9 +233,9 @@ export default function Home() {
             <a href={githubRepoUrl} target="_blank" rel="noreferrer" className="transition hover:text-white">
               GitHub
             </a>
-            <Link href="/auth/signin" className="transition hover:text-white">
-              Accedi al sistema
-            </Link>
+            <a href={demoDownloadUrl} target="_blank" rel="noreferrer" className="transition hover:text-white">
+              Scarica demo
+            </a>
           </div>
         </div>
       </footer>
